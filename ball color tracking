@@ -1,0 +1,71 @@
+import cv2
+import numpy as np
+
+# Initialize the camera
+cap = cv2.VideoCapture(0)
+
+while True:
+    # Capture a frame from the camera
+    ret, frame = cap.read()
+
+    # Convert the frame to HSV color space
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+    # Define the range of colors to detect
+    # Red color
+    lower_red = np.array([0,50,50])
+    upper_red = np.array([10,255,255])
+
+    # Blue color
+    lower_blue = np.array([110,50,50])
+    upper_blue = np.array([130,255,255])
+
+    # Green color
+    lower_green = np.array([50,50,50])
+    upper_green = np.array([70,255,255])
+
+
+    # Create masks for each color
+    mask_red = cv2.inRange(hsv, lower_red, upper_red)
+    mask_blue = cv2.inRange(hsv, lower_blue, upper_blue)
+    mask_green = cv2.inRange(hsv, lower_green, upper_green)
+
+    # Use the masks to detect the colored regions in the frame
+    red_detected = False
+    blue_detected = False
+    green_detected = False
+
+
+    if cv2.countNonZero(mask_red) > 0:
+        red_detected = True
+
+    if cv2.countNonZero(mask_blue) > 0:
+        blue_detected = True
+
+    if cv2.countNonZero(mask_green) > 0:
+        green_detected = True
+
+
+
+    # Print the color of the ball and show the frame if the ball is detected
+    if red_detected:
+        print("The ball is red.")
+        cv2.imshow("Frame", frame)
+    elif blue_detected:
+        print("The ball is blue.")
+        cv2.imshow("Frame", frame)
+    elif green_detected:
+        print("The ball is green.")
+        cv2.imshow("Frame", frame)
+    else:
+        cv2.destroyAllWindows()
+        # If ball is not detected, don't show the frame and don't print anything
+        pass
+
+    # Exit the loop if the 'q' key is pressed
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Release the camera and close the window
+cap.release()
+cv2.destroyAllWindows()
